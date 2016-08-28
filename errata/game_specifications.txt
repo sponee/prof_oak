@@ -1,0 +1,159 @@
+scenes
+
+  -start
+    -Intro music plays
+    -Animation or static image appears. #Similar to when original cartridge is turned on
+    -Move to the battle_intro scene on button press.
+  -battle_intro
+    -Battle music plays. #It needs to continue to play on a loop.  
+    -Animate player in bottom left corner of screen
+    -Animate Prof Oak in top right corner of screen
+    -Player slides off screen left 
+    -Enemy Player slides off screen right
+    -Pokemon leaving pokeball animation #enter_battle method on Pokemon
+    -Move to battle_menu scene 
+  -battle_menu
+    -Use cursor object to allow player to select one of four options: 
+      -Attack #Should show a menu of the player's current_pokemon's moves
+        -Move to the attack_menu scene if selected.
+      -Items #Should show a menu of the player's inventory
+        -Move to the item_menu scene if selected.
+      -Pokemon #Should show a menu of the player's party
+        -Move to the pokemon_menu scene if selected.
+      -Run #Should display a message that says you cannot run from this battle
+        -Move to the battle_menu scene if selected.
+  -attack_menu
+    -Allow player to select one of the current_pokemon's moves
+    -Move to the battle_animation scene if the move is selected
+    -Move to the battle_menu scene if that option is selected. Figure out the best way to implement a back option.
+  -battle_animation
+    -Determine whether the player or enemy player's pokemon moves first based on their current_pokemon's speed
+    -Animate and calculate damage, healing, and/or effects of the first pokemon's move. 
+      Note: There should be a singular method inherited by each move that animates the move and does the calculation. The input will require the opponent's current_pokemon.
+    -Check if the second pokemon is dead.
+      -if current_pokemon.conscious? == false
+        -Remove from current_player.current_pokemon
+        -if current_player.class == Player
+          -Move to pokemon_menu scene
+        -elsif current_player.class == EnemyPlayer
+          -Call enter_battle on enemy_player.
+        -end
+        -Select next pokemon in enemy player's party array. #this might be more nuanced than I thought if we want to be able to revive pokemon.
+    -Animate the second pokemon's move if it is not dead
+    -if current_pokemon.conscious? == false
+      -Remove from current_player.current_pokemon
+        -if current_player.class == Player
+          -Move to pokemon_menu scene
+        -elsif current_player.class == EnemyPlayer
+          -Select next pokemon in enemy player's party array. #this might be more nuanced than I thought if we want to be able to revive pokemon. Duplication makes this look like it needs to be a method.
+        -end
+      -end
+    -If both players have a current_pokemon move to the battle_menu scene
+  -item_menu
+  -pokemon_menu
+  -battle_pokemon_transition 
+    -This is where a new pokemon enter and the pokeball animation opens up
+    -This is where a pokemon lets out their cry!
+
+classes
+
+  -ProfOak #this is the window and game itself
+    -constants
+    -attribute_accessors
+      :current_player = #Player or enemy player
+    -attribute_readers
+    -instance_variables
+      @current_player
+    -methods
+    initialize
+    draw
+    update
+    button_down_battle_menu(id)
+    button_down_game_intro(id)
+
+  -Player
+    -constants
+      MAX_POKEMON = 6
+    -attribute_accessors
+      :party
+      :current_pokemon #This will be the pokemon actively battling.
+      :inventory = [] #Ideally this will hold a few potions.
+    -attribute_readers
+    -instance_variables
+      current_pokemon = []
+      inventory = []
+      party = [] #Array to hold pokemon object, max of six.
+    -methods
+      initialize
+      draw
+      move_off_screen
+      move_on_screen
+      pass_out
+
+  -EnemyPlayer < Player
+    -constants
+    -attribute_accessors
+    -attribute_readers
+    -instance_variables
+    -methods
+
+  -Pokemon #Specific pokemon i.e. Pikachu will inherit from this class
+    -constants
+      MAX_HP
+    -attribute_accessors
+      :hp = 250
+      :attack = 10
+      :special_attack = 10
+      :defense = 10
+      :special_defense = 10
+      :conscious = true
+    -attribute_readers
+      :moves = [] #array to hold move objects
+    -instance_variables
+    -methods
+      initialize
+      draw
+      use_move
+      enter_battle
+      return_to_pokeball
+      faint
+
+  -Move #Specific moves i.e. Water Gun will inherit from this class
+    -constants
+    -attribute_accessors
+    -attribute_readers
+    -instance_variables
+    -methods
+
+  -Cursor #triangle to represent current selection in menu screens
+    -constants
+    -attribute_accessors  
+      :x
+      :y
+    -attribute_readers
+    -instance_variables
+      @x
+      @y
+    -methods
+      initialize(window, x, y)
+      @x = 1
+      @y = 1
+      move_up
+        @y += 1 if @y == 0
+      move_down
+        @y -= 1 if @y == 1
+      move_left
+        @x -= 1 if @x == 1
+      move_right
+        @x += 1 if @x == 0
+
+  -Charizard < Pokemon
+
+  -Tauros < Pokemon
+
+  -Exeggutor < Pokemon
+
+  -Gyarados < Pokemon
+
+  -Arcanine < Pokemon
+
