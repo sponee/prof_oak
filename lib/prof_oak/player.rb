@@ -30,10 +30,10 @@ class Player
 
   def slide_off_screen
     @velocity_x += Gosu.offset_x(45, 1)
-    @x += @velocity_x if @x <= -100
+    @x -= @velocity_x if @x >= -500
   end
 
-  def move
-    @x += @velocity_x if @x <= 100
+  def off_screen?
+    @x <= -499
   end
 end
