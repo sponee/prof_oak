@@ -17,6 +17,7 @@ class ProfOak < Gosu::Window
     self.caption = "Prof. Oak"
     @start_image = Gosu::Image.new("../assets/images/intro.png")
     @battle_start_background = Gosu::Image.new("../assets/images/battle_start.png")
+    @battle_menu_background = Gosu::Image.new("../assets/images/battle_menu_background.png")
     @battle_background = Gosu::Image.new("../assets/images/battle_background.png")
     @intro_music = Gosu::Song.new("../assets/sounds/intro_theme.mp3")
     @intro_music.play(true)
@@ -32,19 +33,12 @@ class ProfOak < Gosu::Window
     @scene = :pcs_on_screen
     @battle_music = Gosu::Song.new("../assets/sounds/battle_theme.mp3")
     @battle_music.play(true)
-    @test_pokemon = Pokemon.new(self, 100, 460, "Persian")
-    @second_test_pokemon = Pokemon.new(self, 740, 100, "Persian")
+    @test_pokemon = Pokemon.new(self, -500, 460, "Persian")
+    @second_test_pokemon = Pokemon.new(self, 1500, 100, "Persian")
     @player.party << @test_pokemon
     @player.current_pokemon = @test_pokemon
     @enemy_player.party << @second_test_pokemon
     @enemy_player.current_pokemon = @second_test_pokemon
-  end
-
-  def initialize_both_pokemon_enter_battle
-    @characters.each do |character|
-      character.current_pokemon.play_battle_cry
-    end
-    @scene = :battle_menu
   end
 
   def draw
@@ -106,10 +100,10 @@ class ProfOak < Gosu::Window
   end
 
   def draw_battle_menu
-    @battle_background.draw(0,0,0)
+    @battle_menu_background.draw(0,0,0)
     @font.draw("#{@player.current_pokemon.name.upcase}",650,550,1,1,1,Gosu::Color::BLACK)
     @font.draw(":L #{@player.current_pokemon.level}",720,600,1,1,1,Gosu::Color::BLACK)
-    @font.draw("#{@enemy_player.current_pokemon.hp} / #{@player.current_pokemon.max_hp}",650,680,1,1,1,Gosu::Color::BLACK)
+    @font.draw("#{@enemy_player.current_pokemon.hp}/ #{@player.current_pokemon.max_hp}",650,680,1,1,1,Gosu::Color::BLACK)
     @font.draw("#{@enemy_player.current_pokemon.name.upcase}",150,50,1,1,1,Gosu::Color::BLACK)
     @font.draw(":L #{@enemy_player.current_pokemon.level}",220,100,1,1,1,Gosu::Color::BLACK)
     @hp_font.draw("HP: ",120,150,1,1,1,Gosu::Color::BLACK)
@@ -128,7 +122,27 @@ class ProfOak < Gosu::Window
       character.slide_off_screen
     end
     if @player.off_screen? && @enemy_player.off_screen?
-      initialize_both_pokemon_enter_battle
+      @scene = :both_pokemon_enter_battle
+      @time_stamp = Gosu.milliseconds
+    end
+  end
+
+  def update_both_pokemon_enter_battle
+    if Gosu.milliseconds >= @time_stamp + 50 && Gosu.milliseconds <= @time_stamp + 65
+      @enemy_player.current_pokemon.play_battle_cry
+    end
+    if Gosu.milliseconds >= @time_stamp + 900 && Gosu.milliseconds <= @time_stamp + 915
+      @player.current_pokemon.play_battle_cry
+    end
+    @characters.each do |character|
+      if character.class == Player && @enemy_player.current_pokemon.onscreen_enemy?
+        @player.current_pokemon.slide_on_screen_player
+      elsif character.class == EnemyPlayer
+        @enemy_player.current_pokemon.slide_on_screen_enemy
+      end
+      if @enemy_player.current_pokemon.onscreen_enemy? && @player.current_pokemon.onscreen_player?
+        @scene = :battle_menu
+      end
     end
   end
 
