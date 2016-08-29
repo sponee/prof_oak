@@ -101,9 +101,8 @@ class ProfOak < Gosu::Window
 
   def draw_both_pokemon_enter_battle
     @battle_background.draw(0,0,0)
-    @characters.each do |character|
-      character.current_pokemon.draw
-    end
+    @enemy_player.current_pokemon.draw("front")
+    @player.current_pokemon.draw("back")
   end
 
   def draw_battle_menu
@@ -114,9 +113,8 @@ class ProfOak < Gosu::Window
     @font.draw("#{@enemy_player.current_pokemon.name.upcase}",150,50,1,1,1,Gosu::Color::BLACK)
     @font.draw(":L #{@enemy_player.current_pokemon.level}",220,100,1,1,1,Gosu::Color::BLACK)
     @hp_font.draw("HP: ",120,150,1,1,1,Gosu::Color::BLACK)
-    @characters.each do |character|
-      character.current_pokemon.draw
-    end
+    @enemy_player.current_pokemon.draw("front")
+    @player.current_pokemon.draw("back")
   end
 
   def update_pcs_on_screen

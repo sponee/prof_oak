@@ -21,12 +21,17 @@ class Pokemon
     @special_attack = 10
     @special_defense = 10
     @moves = []
-    @image = Gosu::Image.new("../assets/images/persian.png")
+    @front_image = Gosu::Image.new("../assets/images/persian_front.png")
+    @back_image = Gosu::Image.new("../assets/images/persian_back.png")
     @battle_cry = Gosu::Sample.new("../assets/sounds/persian.ogg")
   end
 
-  def draw
-    @image.draw(@x, @y, 1)
+  def draw(side)
+    if side == "front"
+      @front_image.draw(@x, @y, 1)
+    elsif side == "back"
+      @back_image.draw(@x, @y, 1)
+    end
   end
 
   def use_move(move, pokemon)
