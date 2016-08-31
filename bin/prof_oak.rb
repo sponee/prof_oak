@@ -97,9 +97,11 @@ class ProfOak < Gosu::Window
     @battle_background.draw(0,0,0)
     @enemy_player.current_pokemon.draw("front")
     @player.current_pokemon.draw("back")
+    @hp_font.draw("#{@time_stamp}",520,150,1,1,1,Gosu::Color::BLACK)
   end
 
   def draw_battle_menu
+    @hp_font.draw("#{@time_stamp}",520,150,1,1,1,Gosu::Color::BLACK)
     @battle_menu_background.draw(0,0,0)
     @font.draw("#{@player.current_pokemon.name.upcase}",650,550,1,1,1,Gosu::Color::BLACK)
     @font.draw(":L #{@player.current_pokemon.level}",720,600,1,1,1,Gosu::Color::BLACK)
@@ -121,17 +123,19 @@ class ProfOak < Gosu::Window
     @characters.each do |character|
       character.slide_off_screen
     end
-    if @player.off_screen? && @enemy_player.off_screen?
+    if Gosu.milliseconds >= @time_stamp + 400
       @scene = :both_pokemon_enter_battle
       @time_stamp = Gosu.milliseconds
+      @battle_cry_played = false
     end
   end
 
   def update_both_pokemon_enter_battle
-    if Gosu.milliseconds >= @time_stamp + 50 && Gosu.milliseconds <= @time_stamp + 65
+    if @battle_cry_played == false
       @enemy_player.current_pokemon.play_battle_cry
+      @battle_cry_played = true
     end
-    if Gosu.milliseconds >= @time_stamp + 900 && Gosu.milliseconds <= @time_stamp + 915
+    if Gosu.milliseconds.between?((@time_stamp + 900),(@time_stamp + 915))
       @player.current_pokemon.play_battle_cry
     end
     @characters.each do |character|
@@ -148,6 +152,7 @@ class ProfOak < Gosu::Window
 
   def button_down_pcs_on_screen(id)
     @scene = :pcs_off_screen
+    @time_stamp = Gosu.milliseconds
   end
 
   def button_down_start(id)
