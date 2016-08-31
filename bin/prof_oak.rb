@@ -128,7 +128,6 @@ class ProfOak < Gosu::Window
     end
     if Gosu.milliseconds >= @time_stamp + 400
       @scene = :both_pokemon_enter_battle
-      @time_stamp = Gosu.milliseconds
       @battle_cry_played = false
     end
   end
@@ -137,8 +136,9 @@ class ProfOak < Gosu::Window
     if @battle_cry_played == false
       @enemy_player.current_pokemon.play_battle_cry
       @battle_cry_played = true
+      @time_stamp = Gosu.milliseconds
     end
-    if Gosu.milliseconds.between?((@time_stamp + 900),(@time_stamp + 915))
+    if Gosu.milliseconds.between?((@time_stamp + 900),(@time_stamp + 920))
       @player.current_pokemon.play_battle_cry
     end
     @characters.each do |character|
