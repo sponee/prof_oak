@@ -3,6 +3,7 @@ require_relative '../lib/prof_oak/player.rb'
 require_relative '../lib/prof_oak/enemy_player.rb'
 require_relative '../lib/prof_oak/text.rb'
 require_relative '../lib/prof_oak/pokemon.rb'
+require_relative '../lib/prof_oak/cursor.rb'
 
 class ProfOak < Gosu::Window
   WIDTH = 1280
@@ -23,6 +24,7 @@ class ProfOak < Gosu::Window
     @intro_music.play(true)
     @player = Player.new(self, -500)
     @enemy_player = EnemyPlayer.new(self, 1500)
+    @cursor = Cursor.new(self, 570, 920)
     @characters = [@player, @enemy_player]
     @font = Gosu::Font.new(self, FONT_ASSETS[:font], 50)
     @hp_font = Gosu::Font.new(self, FONT_ASSETS[:font], 40)
@@ -73,6 +75,8 @@ class ProfOak < Gosu::Window
       button_down_start(id)
     when :pcs_on_screen
       button_down_pcs_on_screen(id)
+    when :battle_menu
+      button_down_battle_menu(id)
     end
   end
 
@@ -97,11 +101,10 @@ class ProfOak < Gosu::Window
     @battle_background.draw(0,0,0)
     @enemy_player.current_pokemon.draw("front")
     @player.current_pokemon.draw("back")
-    @hp_font.draw("#{@time_stamp}",520,150,1,1,1,Gosu::Color::BLACK)
   end
 
   def draw_battle_menu
-    @hp_font.draw("#{@time_stamp}",520,150,1,1,1,Gosu::Color::BLACK)
+    @cursor.draw
     @battle_menu_background.draw(0,0,0)
     @font.draw("#{@player.current_pokemon.name.upcase}",650,550,1,1,1,Gosu::Color::BLACK)
     @font.draw(":L #{@player.current_pokemon.level}",720,600,1,1,1,Gosu::Color::BLACK)
@@ -158,6 +161,18 @@ class ProfOak < Gosu::Window
   def button_down_start(id)
     @scene = :pcs_on_screen
     initialize_game
+  end
+
+  def button_down_battle_menu(id)
+    if id == Gosu::KbLeft
+      @cursor.move_left
+    elsif id == Gosu::KbRight
+      @cursor.move_right
+    elsif id == Gosu::KbUp
+      @cursor.move_up
+    elsif id == Gosu::KbDown
+      @cursor.move_down
+    end
   end
 end
 
