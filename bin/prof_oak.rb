@@ -4,8 +4,9 @@ require_relative '../lib/prof_oak/enemy_player.rb'
 require_relative '../lib/prof_oak/text.rb'
 require_relative '../lib/prof_oak/pokemon.rb'
 require_relative '../lib/prof_oak/cursor.rb'
+require_relative '../lib/prof_oak/type_chart.rb'
 
-class ProfOak < Gosu::Window
+class ProfessorOak < Gosu::Window
   WIDTH = 1280
   HEIGHT = 1200
 
@@ -18,10 +19,11 @@ class ProfOak < Gosu::Window
     self.caption = "Prof. Oak"
     @start_image = Gosu::Image.new("../assets/images/intro.png")
     @battle_start_background = Gosu::Image.new("../assets/images/battle_start.png")
+    @attack_menu = Gosu::Image.new("../assets/images/attack_menu.png")
     @battle_menu_background = Gosu::Image.new("../assets/images/battle_menu_background.png")
     @battle_background = Gosu::Image.new("../assets/images/battle_background.png")
     @intro_music = Gosu::Song.new("../assets/sounds/intro_theme.mp3")
-    @intro_music.play(true)
+   # @intro_music.play(true)
     @player = Player.new(self, -500)
     @enemy_player = EnemyPlayer.new(self, 1500)
     @cursor = Cursor.new(self, 570, 920)
@@ -34,7 +36,7 @@ class ProfOak < Gosu::Window
   def initialize_game
     @scene = :pcs_on_screen
     @battle_music = Gosu::Song.new("../assets/sounds/battle_theme.mp3")
-    @battle_music.play(true)
+    #@battle_music.play(true)
     @test_pokemon = Pokemon.new(self, -500, 460, "Persian")
     @second_test_pokemon = Pokemon.new(self, 1500, 100, "Persian")
     @player.party << @test_pokemon
@@ -54,7 +56,9 @@ class ProfOak < Gosu::Window
     when :both_pokemon_enter_battle
       draw_both_pokemon_enter_battle
     when :battle_menu
-      draw_battle_menu
+      draw_battle_menu(@battle_menu_background)
+    when :attack_menu
+      draw_attack_menu(@battle_menu_background)
     end
   end
 
@@ -66,6 +70,8 @@ class ProfOak < Gosu::Window
       update_pcs_off_screen
     when :both_pokemon_enter_battle
       update_both_pokemon_enter_battle
+    when :attack_menu
+      update_attack_menu
     end
   end
 
@@ -77,6 +83,8 @@ class ProfOak < Gosu::Window
       button_down_pcs_on_screen(id)
     when :battle_menu
       button_down_battle_menu(id)
+    when :attack_menu
+      button_down_attack_menu(id)
     end
   end
 
@@ -103,9 +111,28 @@ class ProfOak < Gosu::Window
     @player.current_pokemon.draw("back")
   end
 
-  def draw_battle_menu
+  def draw_battle_menu(background)
     @cursor.draw
-    @battle_menu_background.draw(0,0,0)
+    background.draw(0,0,0)
+    @font.draw("#{@player.current_pokemon.name.upcase}",650,550,1,1,1,Gosu::Color::BLACK)
+    @font.draw(":L #{@player.current_pokemon.level}",720,600,1,1,1,Gosu::Color::BLACK)
+    @font.draw("#{@enemy_player.current_pokemon.hp}/ #{@player.current_pokemon.max_hp}",650,680,1,1,1,Gosu::Color::BLACK)
+    @font.draw("#{@enemy_player.current_pokemon.name.upcase}",150,50,1,1,1,Gosu::Color::BLACK)
+    @font.draw(":L #{@enemy_player.current_pokemon.level}",220,100,1,1,1,Gosu::Color::BLACK)
+    @hp_font.draw("HP: ",120,150,1,1,1,Gosu::Color::BLACK)
+    @enemy_player.current_pokemon.draw("front")
+    @player.current_pokemon.draw("back")
+  end
+
+  def draw_attack_menu(background)
+    @cursor.draw
+    @attack_menu.draw(0,530,2)
+    background.draw(0,0,0)
+    @font.draw("TYPE/",40,600,2,1,1.5,Gosu::Color::BLACK)
+    @font.draw("#{@player.current_pokemon.moves[0].type.upcase}",75,670,2,1,1.5,Gosu::Color::BLACK)
+    @font.draw("#{@player.current_pokemon.moves[0].pp}/",420,730,2,1,1.5,Gosu::Color::BLACK)
+    @font.draw("#{@player.current_pokemon.moves[0].max_pp}",550,730,2,1,1.5,Gosu::Color::BLACK)
+    @hp_font.draw("#{@player.current_pokemon.moves[0].name}",450,900,2,1,2,Gosu::Color::BLACK)
     @font.draw("#{@player.current_pokemon.name.upcase}",650,550,1,1,1,Gosu::Color::BLACK)
     @font.draw(":L #{@player.current_pokemon.level}",720,600,1,1,1,Gosu::Color::BLACK)
     @font.draw("#{@enemy_player.current_pokemon.hp}/ #{@player.current_pokemon.max_hp}",650,680,1,1,1,Gosu::Color::BLACK)
@@ -134,12 +161,12 @@ class ProfOak < Gosu::Window
 
   def update_both_pokemon_enter_battle
     if @battle_cry_played == false
-      @enemy_player.current_pokemon.play_battle_cry
+      #@enemy_player.current_pokemon.play_battle_cry
       @battle_cry_played = true
       @time_stamp = Gosu.milliseconds
     end
     if Gosu.milliseconds.between?((@time_stamp + 900),(@time_stamp + 920))
-      @player.current_pokemon.play_battle_cry
+      #@player.current_pokemon.play_battle_cry
     end
     @characters.each do |character|
       if character.class == Player && @enemy_player.current_pokemon.onscreen_enemy?
@@ -151,6 +178,9 @@ class ProfOak < Gosu::Window
         @scene = :battle_menu
       end
     end
+  end
+
+  def update_attack_menu
   end
 
   def button_down_pcs_on_screen(id)
@@ -165,16 +195,33 @@ class ProfOak < Gosu::Window
 
   def button_down_battle_menu(id)
     if id == Gosu::KbLeft
-      @cursor.move_left
+      @cursor.move_left_battle_menu
     elsif id == Gosu::KbRight
-      @cursor.move_right
+      @cursor.move_right_battle_menu
     elsif id == Gosu::KbUp
-      @cursor.move_up
+      @cursor.move_up_battle_menu
     elsif id == Gosu::KbDown
-      @cursor.move_down
+      @cursor.move_down_battle_menu
+    elsif id == Gosu::KbReturn && @cursor.menu_selection_x == 1 && @cursor.menu_selection_y == 1
+      @scene = :attack_menu
+      @cursor.menu_selection_y = 0
+      @cursor.x = 375
+      @cursor.y = 890
+      @cursor.z = 3
     end
   end
 end
 
-window = ProfOak.new
+def button_down_attack_menu(id)
+  if id == Gosu::KbEscape
+    @scene = :battle_menu
+    @cursor.reset_battle_menu
+  elsif id == Gosu::KbDown
+    @cursor.move_down_attack_menu
+  elsif id == Gosu::KbUp
+    @cursor.move_up_attack_menu
+  end
+end
+
+window = ProfessorOak.new
 window.show

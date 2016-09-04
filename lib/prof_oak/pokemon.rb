@@ -1,3 +1,5 @@
+require_relative 'move.rb'
+
 class Pokemon
   MAX_HP = 200
   attr_accessor :hp
@@ -5,12 +7,15 @@ class Pokemon
   attr_accessor :defense
   attr_accessor :special_attack
   attr_accessor :special_defense
+  attr_accessor :moves
   attr_reader :name
   attr_reader :level
   attr_reader :max_hp
   attr_reader :battle_cry
+  attr_reader :type
 
   def initialize(window, x, y, name="Pokémon", level=35)
+    @type = :normal
     @level = level
     @name = name
     @window = window
@@ -23,7 +28,7 @@ class Pokemon
     @defense = 10
     @special_attack = 10
     @special_defense = 10
-    @moves = []
+    @moves = [Move.new(@window)]
     @front_image = Gosu::Image.new("../assets/images/persian_front.png")
     @back_image = Gosu::Image.new("../assets/images/persian_back.png")
     @battle_cry = Gosu::Sample.new("../assets/sounds/persian.ogg")
@@ -31,14 +36,14 @@ class Pokemon
 
   def draw(side)
     if side == "front"
-      @front_image.draw(@x, @y, 1)
+      @front_image.draw(@x, @y, 0)
     elsif side == "back"
-      @back_image.draw(@x, @y, 1)
+      @back_image.draw(@x, @y, 0)
     end
   end
 
-  def use_move(move, pokemon)
-    move.use(pokemon)
+  def use_move(move, player_pokemon, enemy_pokemon)
+    move.take_effect(player_pokemon, enemy_pokemon)
   end
 
   def enter_battle
