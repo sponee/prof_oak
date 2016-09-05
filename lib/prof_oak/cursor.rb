@@ -34,7 +34,7 @@ class Cursor
     if @menu_selection_x == 0
       @menu_selection_x += 1
       @x = 570
-      #self.play_sound_effect
+      self.play_sound_effect
     end
   end
 
@@ -42,7 +42,7 @@ class Cursor
     if @menu_selection_x == 1
       @menu_selection_x -= 1
       @x = 950
-      #self.play_sound_effect
+      self.play_sound_effect
     end
   end
 
@@ -50,7 +50,7 @@ class Cursor
     if @menu_selection_y == 0
       @menu_selection_y += 1
       @y = 920
-      #self.play_sound_effect
+      self.play_sound_effect
     end
   end
 
@@ -58,7 +58,7 @@ class Cursor
     if @menu_selection_y == 1
       @menu_selection_y -= 1
       @y = 1050
-      #self.play_sound_effect
+      self.play_sound_effect
     end
   end
 
@@ -75,7 +75,7 @@ class Cursor
       @menu_selection_y -= 1
       @y -= 75
       @z = 3
-      #self.play_sound_effect
+      self.play_sound_effect
     end
   end
 
@@ -84,7 +84,7 @@ class Cursor
       @menu_selection_y += 1
       @y += 75
       @z = 3
-      #self.play_sound_effect
+      self.play_sound_effect
     end
   end
 end

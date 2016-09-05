@@ -23,7 +23,7 @@ class ProfessorOak < Gosu::Window
     @battle_menu_background = Gosu::Image.new("../assets/images/battle_menu_background.png")
     @battle_background = Gosu::Image.new("../assets/images/battle_background.png")
     @intro_music = Gosu::Song.new("../assets/sounds/intro_theme.mp3")
-   # @intro_music.play(true)
+    @intro_music.play(true)
     @player = Player.new(self, -500)
     @enemy_player = EnemyPlayer.new(self, 1500)
     @cursor = Cursor.new(self, 570, 920)
@@ -36,13 +36,14 @@ class ProfessorOak < Gosu::Window
   def initialize_game
     @scene = :pcs_on_screen
     @battle_music = Gosu::Song.new("../assets/sounds/battle_theme.mp3")
-    #@battle_music.play(true)
+    @battle_music.play(true)
     @test_pokemon = Pokemon.new(self, -500, 460, "Persian")
     @second_test_pokemon = Pokemon.new(self, 1500, 100, "Persian")
     @player.party << @test_pokemon
     @player.current_pokemon = @test_pokemon
     @enemy_player.party << @second_test_pokemon
     @enemy_player.current_pokemon = @second_test_pokemon
+    @pokemon_in_battle = [@player.current_pokemon, @enemy_player.current_pokemon]
   end
 
   def draw
@@ -59,6 +60,8 @@ class ProfessorOak < Gosu::Window
       draw_battle_menu(@battle_menu_background)
     when :attack_menu
       draw_attack_menu(@battle_menu_background)
+    when :move_animations
+      draw_battle_menu(@battle_menu_background)
     end
   end
 
@@ -70,8 +73,8 @@ class ProfessorOak < Gosu::Window
       update_pcs_off_screen
     when :both_pokemon_enter_battle
       update_both_pokemon_enter_battle
-    when :attack_menu
-      update_attack_menu
+    when :move_animations
+      update_move_animations
     end
   end
 
@@ -126,7 +129,6 @@ class ProfessorOak < Gosu::Window
   end
 
   def draw_attack_menu(background)
-    @font.draw("#{@cursor.menu_selection_y}",400,600,3,1,1.5,Gosu::Color::BLACK)
     @cursor.draw
     @attack_menu.draw(0,530,2)
     background.draw(0,0,0)
@@ -164,12 +166,12 @@ class ProfessorOak < Gosu::Window
 
   def update_both_pokemon_enter_battle
     if @battle_cry_played == false
-      #@enemy_player.current_pokemon.play_battle_cry
+      @enemy_player.current_pokemon.play_battle_cry
       @battle_cry_played = true
       @time_stamp = Gosu.milliseconds
     end
     if Gosu.milliseconds.between?((@time_stamp + 900),(@time_stamp + 920))
-      #@player.current_pokemon.play_battle_cry
+      @player.current_pokemon.play_battle_cry
     end
     @characters.each do |character|
       if character.class == Player && @enemy_player.current_pokemon.onscreen_enemy?
@@ -183,7 +185,19 @@ class ProfessorOak < Gosu::Window
     end
   end
 
-  def update_attack_menu
+  def update_move_animations
+    if @player.current_pokemon.speed >= @enemy_player.current_pokemon.speed
+      @time_stamp = Gosu.milliseconds
+      @player.current_pokemon.use_move(@player.current_pokemon.moves[@cursor.menu_selection_y], @player.current_pokemon, @enemy_player.current_pokemon)
+      if Gosu.milliseconds >= @time_stamp + 900
+        @enemy_player.current_pokemon.use_move(@enemy_player.current_pokemon.moves[0], @enemy_player.current_pokemon, @player.current_pokemon)
+      end
+    else
+      @player.current_pokemon.use_move(@player.current_pokemon.moves[@cursor.menu_selection_y], @player.current_pokemon, @enemy_player.current_pokemon)
+      @enemy_player.current_pokemon.use_move(@enemy_player.current_pokemon.moves[0], @enemy_player.current_pokemon, @player.current_pokemon)
+    end
+    @cursor.reset_battle_menu
+    @scene = :battle_menu
   end
 
   def button_down_pcs_on_screen(id)
@@ -224,9 +238,7 @@ def button_down_attack_menu(id)
   elsif id == Gosu::KbUp
     @cursor.move_up_attack_menu
   elsif id == Gosu::KbReturn
-    @player.current_pokemon.use_move(@player.current_pokemon.moves[@cursor.menu_selection_y], @player.current_pokemon, @enemy_player.current_pokemon)
-    @scene = :battle_menu
-    @cursor.reset_battle_menu
+    @scene = :move_animations
   end
 end
 

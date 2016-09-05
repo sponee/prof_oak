@@ -7,6 +7,7 @@ class Pokemon
   attr_accessor :defense
   attr_accessor :special_attack
   attr_accessor :special_defense
+  attr_accessor :speed
   attr_accessor :moves
   attr_reader :name
   attr_reader :level
@@ -28,6 +29,7 @@ class Pokemon
     @defense = 10
     @special_attack = 10
     @special_defense = 10
+    @speed = 10
     @moves = [Move.new(@window)]
     @front_image = Gosu::Image.new("../assets/images/persian_front.png")
     @back_image = Gosu::Image.new("../assets/images/persian_back.png")
