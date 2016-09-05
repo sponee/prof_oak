@@ -157,3 +157,76 @@ classes
 
   -Arcanine < Pokemon
 
+
+To-Do
+
+Create :attack_menu scene. 
+  It should display all of a pokemon's moves top to bottom
+  When the cursor points at a move
+    it displays the move's type
+    it displays the move's current and max PP
+    it should use the move when button_down(id) == Gosu::KbEnter
+  Pressing Enter should trigger the :move_animation scene
+
+
+  I'm probably going to need to crop the attack menu scene so it's a smaller image rather than a background image and lay it on top of the battle_menu_background. Having the attack menu selection be its own background means I can't have pokemon on the same y coordinate.
+
+Create :move_animation scene
+  Move Animation scene
+    it should randomly select a move from the enemy player's current pokemon
+    it should sort the enemy player and current player's pokemon by speed
+    it should show the animation and play the sound effect of the fastest pokemon's move
+    it should perform the damage or healing calculation to whichever pokemon was affected.
+    it should check if either pokemon is dead
+  if a player or enemy player's current_pokemon is dead and they have no more pokemon 
+      the game ends
+    if neither player's current_pokemon is dead  
+      it should show the animation and play the sound effect of the next pokemon's move
+      it should perform the damage or healing calculation to whichever pokemon was affected.
+      it should check if either pokemon is dead
+  if a player or enemy player's current_pokemon is dead and they have no more pokemon 
+      the game ends
+    if neither player's' pokemon is dead
+      it should automatically move to the :battle_menu scene
+
+Consier creating a module with hashes for type chart. i.e.
+
+module ProfOak
+  module ProfOak
+    module TypeChart
+      SUPER_EFFECTIVE = 1.5
+      NEUTRAL = 1
+      RESISTANT = 0.5
+      NO_EFFECT = 0
+
+      FIRE = { 
+        :normal => NEUTRAL,
+        :fire => RESISTANT, 
+        :water => RESISTANT, 
+        :electrict => NEUTRAL,
+        :grass => SUPER_EFFECTIVE, 
+        :ice => SUPER_EFFECTIVE,
+        :poison => NEUTRAL,
+        :ground => NEUTRAL,
+        :flying => NEUTRAL,
+        :psychic => NEUTRAL,
+        :bug => SUPER_EFFECTIVE, 
+        :rock => RESISTANT,
+        :ghost => NEUTRAL,
+        :dragon => RESISTANT,
+        :dark => NEUTRAL, 
+        :steel => SUPER_EFFECTIVE 
+      }
+    end
+  end
+end
+
+
+Create class Tackle < Move
+  MAX_PP = 15
+  DAMAGE = 10
+  TYPE = :normal
+
+  def effect(player_pokemon, enemy_pokemon)
+    enemy_pokemon.hp = enemy_pokemon.hp - (DAMAGE * ProfOak::TypeChar::Normal[enemy_pokemon.type])
+  end
