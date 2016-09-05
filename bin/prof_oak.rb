@@ -116,15 +116,17 @@ class ProfessorOak < Gosu::Window
     background.draw(0,0,0)
     @font.draw("#{@player.current_pokemon.name.upcase}",650,550,1,1,1,Gosu::Color::BLACK)
     @font.draw(":L #{@player.current_pokemon.level}",720,600,1,1,1,Gosu::Color::BLACK)
-    @font.draw("#{@enemy_player.current_pokemon.hp}/ #{@player.current_pokemon.max_hp}",650,680,1,1,1,Gosu::Color::BLACK)
+    @font.draw("#{@player.current_pokemon.hp}/ #{@player.current_pokemon.max_hp}",650,680,1,1,1,Gosu::Color::BLACK)
     @font.draw("#{@enemy_player.current_pokemon.name.upcase}",150,50,1,1,1,Gosu::Color::BLACK)
     @font.draw(":L #{@enemy_player.current_pokemon.level}",220,100,1,1,1,Gosu::Color::BLACK)
-    @hp_font.draw("HP: ",120,150,1,1,1,Gosu::Color::BLACK)
+    @hp_font.draw("HP: ",120,160,1,1,1,Gosu::Color::BLACK)
+    @font.draw("#{@enemy_player.current_pokemon.hp}/ #{@enemy_player.current_pokemon.max_hp}",240,150,1,1,1,Gosu::Color::BLACK)
     @enemy_player.current_pokemon.draw("front")
     @player.current_pokemon.draw("back")
   end
 
   def draw_attack_menu(background)
+    @font.draw("#{@cursor.menu_selection_y}",400,600,3,1,1.5,Gosu::Color::BLACK)
     @cursor.draw
     @attack_menu.draw(0,530,2)
     background.draw(0,0,0)
@@ -132,13 +134,14 @@ class ProfessorOak < Gosu::Window
     @font.draw("#{@player.current_pokemon.moves[0].type.upcase}",75,670,2,1,1.5,Gosu::Color::BLACK)
     @font.draw("#{@player.current_pokemon.moves[0].pp}/",420,730,2,1,1.5,Gosu::Color::BLACK)
     @font.draw("#{@player.current_pokemon.moves[0].max_pp}",550,730,2,1,1.5,Gosu::Color::BLACK)
-    @hp_font.draw("#{@player.current_pokemon.moves[0].name}",450,900,2,1,2,Gosu::Color::BLACK)
+    @hp_font.draw("#{@player.current_pokemon.moves[0].name}",450,860,2,1,2,Gosu::Color::BLACK)
     @font.draw("#{@player.current_pokemon.name.upcase}",650,550,1,1,1,Gosu::Color::BLACK)
     @font.draw(":L #{@player.current_pokemon.level}",720,600,1,1,1,Gosu::Color::BLACK)
-    @font.draw("#{@enemy_player.current_pokemon.hp}/ #{@player.current_pokemon.max_hp}",650,680,1,1,1,Gosu::Color::BLACK)
+    @font.draw("#{@player.current_pokemon.hp}/ #{@player.current_pokemon.max_hp}",650,680,1,1,1,Gosu::Color::BLACK)
     @font.draw("#{@enemy_player.current_pokemon.name.upcase}",150,50,1,1,1,Gosu::Color::BLACK)
+    @font.draw("#{@enemy_player.current_pokemon.hp}/ #{@enemy_player.current_pokemon.max_hp}",240,150,1,1,1,Gosu::Color::BLACK)
     @font.draw(":L #{@enemy_player.current_pokemon.level}",220,100,1,1,1,Gosu::Color::BLACK)
-    @hp_font.draw("HP: ",120,150,1,1,1,Gosu::Color::BLACK)
+    @hp_font.draw("HP: ",120,160,1,1,1,Gosu::Color::BLACK)
     @enemy_player.current_pokemon.draw("front")
     @player.current_pokemon.draw("back")
   end
@@ -206,7 +209,7 @@ class ProfessorOak < Gosu::Window
       @scene = :attack_menu
       @cursor.menu_selection_y = 0
       @cursor.x = 375
-      @cursor.y = 890
+      @cursor.y = 850
       @cursor.z = 3
     end
   end
@@ -220,6 +223,10 @@ def button_down_attack_menu(id)
     @cursor.move_down_attack_menu
   elsif id == Gosu::KbUp
     @cursor.move_up_attack_menu
+  elsif id == Gosu::KbReturn
+    @player.current_pokemon.use_move(@player.current_pokemon.moves[@cursor.menu_selection_y], @player.current_pokemon, @enemy_player.current_pokemon)
+    @scene = :battle_menu
+    @cursor.reset_battle_menu
   end
 end
 
