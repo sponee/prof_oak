@@ -4,10 +4,8 @@ class Move
   MAX_PP = 10
   DAMAGE = 10
 
-  attr_reader :type
-  attr_reader :name
-  attr_reader :max_pp
   attr_accessor :pp
+  attr_reader :type, :name, :max_pp
 
   def initialize(window)
     @name = "Tackle"

@@ -2,24 +2,15 @@ require_relative 'move.rb'
 
 class Pokemon
   MAX_HP = 200
-  attr_accessor :hp
-  attr_accessor :attack
-  attr_accessor :defense
-  attr_accessor :special_attack
-  attr_accessor :special_defense
-  attr_accessor :speed
-  attr_accessor :moves
-  attr_reader :name
-  attr_reader :level
-  attr_reader :max_hp
-  attr_reader :battle_cry
-  attr_reader :type
+  attr_accessor :hp, :attack, :defense, :special_attack, :special_defense, :speed, :moves
+  attr_reader :name, :level, :max_hp, :battle_cry, :type
 
-  def initialize(window, x, y, name="Pokémon", level=35)
+  def initialize(window, x, y, name="Pokémon", level=35, friendly=true)
     @type = :normal
     @level = level
     @name = name
     @window = window
+    @friendly = friendly
     @hp = @max_hp = MAX_HP
     @x = x
     @y = y
@@ -62,6 +53,10 @@ class Pokemon
   def faint
   end
 
+  def friendly?
+    @friendly
+  end
+
   def slide_on_screen_enemy
     @velocity_x += Gosu.offset_x(45, 1)
     @x -= @velocity_x if @x >= 850
@@ -72,7 +67,7 @@ class Pokemon
     @x -= @velocity_x if @x >= -500
   end
 
-    def slide_on_screen_player
+  def slide_on_screen_player
     @velocity_x += Gosu.offset_x(45, 1)
     @x += @velocity_x if @x <= 100
   end

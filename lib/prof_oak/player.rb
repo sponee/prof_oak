@@ -1,11 +1,7 @@
 require 'gosu'
 
 class Player
-  attr_accessor :party
-  attr_accessor :current_pokemon
-  attr_accessor :current_inventory
-  attr_accessor :x
-  attr_accessor :y
+  attr_accessor :party, :current_pokemon, :current_inventory, :x, :y
 
   def initialize(window, x=-100, y=460)
     @window = window

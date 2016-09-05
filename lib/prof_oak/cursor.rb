@@ -1,11 +1,7 @@
 require 'gosu'
 
 class Cursor
-  attr_accessor :x
-  attr_accessor :y
-  attr_accessor :z
-  attr_accessor :menu_selection_x
-  attr_accessor :menu_selection_y
+  attr_accessor :x, :y, :z, :menu_selection_x, :menu_selection_y
 
   def initialize(window, x=-100, y=460, z=1)
     @window = window

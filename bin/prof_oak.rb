@@ -186,18 +186,25 @@ class ProfessorOak < Gosu::Window
   end
 
   def update_move_animations
-    if @player.current_pokemon.speed >= @enemy_player.current_pokemon.speed
-      @time_stamp = Gosu.milliseconds
-      @player.current_pokemon.use_move(@player.current_pokemon.moves[@cursor.menu_selection_y], @player.current_pokemon, @enemy_player.current_pokemon)
-      if Gosu.milliseconds >= @time_stamp + 900
-        @enemy_player.current_pokemon.use_move(@enemy_player.current_pokemon.moves[0], @enemy_player.current_pokemon, @player.current_pokemon)
+    sorted_pokemon = @pokemon_in_battle.sort { |x, y| x.speed <=> y.speed }
+    if @first_pokemon_attacked == false
+      if sorted_pokemon.first.friendly?
+        sorted_pokemon.first.use_move(sorted_pokemon.first.moves[@cursor.menu_selection_y], sorted_pokemon.first, @enemy_player.current_pokemon)
+      else
+        sorted_pokemon.last.use_move(pokemon.moves[0], sorted_pokemon.last, @player.current_pokemon)
       end
-    else
-      @player.current_pokemon.use_move(@player.current_pokemon.moves[@cursor.menu_selection_y], @player.current_pokemon, @enemy_player.current_pokemon)
-      @enemy_player.current_pokemon.use_move(@enemy_player.current_pokemon.moves[0], @enemy_player.current_pokemon, @player.current_pokemon)
+      @time_stamp = Gosu.milliseconds
+      @first_pokemon_attacked = true
     end
-    @cursor.reset_battle_menu
-    @scene = :battle_menu
+    if Gosu.milliseconds.between?((@time_stamp + 900),(@time_stamp + 920))
+      if sorted_pokemon.last.friendly?
+        sorted_pokemon.last.use_move(sorted_pokemon.last.moves[0], sorted_pokemon.last, @player.current_pokemon)
+      else
+        sorted_pokemon.first.use_move(sorted_pokemon.first.moves[@cursor.menu_selection_y], sorted_pokemon.first, @enemy_player.current_pokemon)
+      end
+      @cursor.reset_battle_menu
+      @scene = :battle_menu    
+    end
   end
 
   def button_down_pcs_on_screen(id)
@@ -239,6 +246,7 @@ def button_down_attack_menu(id)
     @cursor.move_up_attack_menu
   elsif id == Gosu::KbReturn
     @scene = :move_animations
+    @first_pokemon_attacked = false
   end
 end
 

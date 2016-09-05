@@ -230,3 +230,30 @@ Create class Tackle < Move
   def effect(player_pokemon, enemy_pokemon)
     enemy_pokemon.hp = enemy_pokemon.hp - (DAMAGE * ProfOak::TypeChar::Normal[enemy_pokemon.type])
   end
+
+
+consider creating a flag on the Pokemon class that indicates whether it is a friendly or enemy pokemon.
+
+  sorted_pokemon = @pokemon_in_battle.sort { |x.stamina, y.stamina| x <=> y }
+  if @first_pokemon_attacked == false
+    if sorterd_pokemon.first.friendly?
+      pokemon.use_move(pokemon.moves[@cursor.menu_selection_y], pokemon, @enemy_player.current_pokemon)
+    else
+      pokemon.use_move(pokemon.moves[0], @pokemon, @player.current_pokemon)
+    end
+    @time_stamp = Gosu.milliseconds
+    @first_pokemon_attacked = true
+  end
+  if Gosu.milliseconds.between?((@time_stamp + 900),(@time_stamp + 920))
+    if sorterd_pokemon.last.friendly?
+      pokemon.use_move(pokemon.moves[@cursor.menu_selection_y], pokemon, @enemy_player.current_pokemon)
+    else
+      pokemon.use_move(pokemon.moves[0], @pokemon, @player.current_pokemon)
+    end
+    @cursor.reset_battle_menu
+    @scene = :battle_menu    
+  end
+
+
+
+
