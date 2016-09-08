@@ -16,7 +16,7 @@ class Move
 
   def take_effect(player_pokemon, enemy_pokemon)
     enemy_pokemon.hp = enemy_pokemon.hp - (DAMAGE * ProfOak::TypeChart::NORMAL[enemy_pokemon.type])
-    @sound_effect.play
+    @sound_effect.play(1.5)
     @pp -= 1
   end
 end

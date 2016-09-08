@@ -61,7 +61,7 @@ class ProfessorOak < Gosu::Window
     when :attack_menu
       draw_attack_menu(@battle_menu_background)
     when :move_animations
-      draw_battle_menu(@battle_menu_background)
+      draw_move_animations(@battle_background)
     end
   end
 
@@ -116,6 +116,19 @@ class ProfessorOak < Gosu::Window
 
   def draw_battle_menu(background)
     @cursor.draw
+    background.draw(0,0,0)
+    @font.draw("#{@player.current_pokemon.name.upcase}",650,550,1,1,1,Gosu::Color::BLACK)
+    @font.draw(":L #{@player.current_pokemon.level}",720,600,1,1,1,Gosu::Color::BLACK)
+    @font.draw("#{@player.current_pokemon.hp}/ #{@player.current_pokemon.max_hp}",650,680,1,1,1,Gosu::Color::BLACK)
+    @font.draw("#{@enemy_player.current_pokemon.name.upcase}",150,50,1,1,1,Gosu::Color::BLACK)
+    @font.draw(":L #{@enemy_player.current_pokemon.level}",220,100,1,1,1,Gosu::Color::BLACK)
+    @hp_font.draw("HP: ",120,160,1,1,1,Gosu::Color::BLACK)
+    @font.draw("#{@enemy_player.current_pokemon.hp}/ #{@enemy_player.current_pokemon.max_hp}",240,150,1,1,1,Gosu::Color::BLACK)
+    @enemy_player.current_pokemon.draw("front")
+    @player.current_pokemon.draw("back")
+  end
+
+  def draw_move_animations(background)
     background.draw(0,0,0)
     @font.draw("#{@player.current_pokemon.name.upcase}",650,550,1,1,1,Gosu::Color::BLACK)
     @font.draw(":L #{@player.current_pokemon.level}",720,600,1,1,1,Gosu::Color::BLACK)
@@ -194,6 +207,7 @@ class ProfessorOak < Gosu::Window
         sorted_pokemon.last.use_move(pokemon.moves[0], sorted_pokemon.last, @player.current_pokemon)
       end
       @time_stamp = Gosu.milliseconds
+      @second_time_stamp = @time_stamp
       @first_pokemon_attacked = true
     end
     if Gosu.milliseconds.between?((@time_stamp + 900),(@time_stamp + 920))
@@ -201,9 +215,11 @@ class ProfessorOak < Gosu::Window
         sorted_pokemon.last.use_move(sorted_pokemon.last.moves[0], sorted_pokemon.last, @player.current_pokemon)
       else
         sorted_pokemon.first.use_move(sorted_pokemon.first.moves[@cursor.menu_selection_y], sorted_pokemon.first, @enemy_player.current_pokemon)
-      end
+      end    
+    end
+    if Gosu.milliseconds > @second_time_stamp + 1800
       @cursor.reset_battle_menu
-      @scene = :battle_menu    
+      @scene = :battle_menu
     end
   end
 
