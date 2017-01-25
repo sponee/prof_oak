@@ -1,4 +1,6 @@
-require 'pry'
+Dir[File.join(File.dirname(__FILE__), "lib" , "**", "**.rb")].each do |file|
+  require file
+end
 require_relative '../lib/prof_oak/player.rb'
 require_relative '../lib/prof_oak/enemy_player.rb'
 require_relative '../lib/prof_oak/text.rb'
@@ -210,7 +212,7 @@ class ProfessorOak < Gosu::Window
       @second_time_stamp = @time_stamp
       @first_pokemon_attacked = true
     end
-    if Gosu.milliseconds.between?((@time_stamp + 900),(@time_stamp + 920)) && @last_pokemon_attacked == false
+    if Gosu.milliseconds >= @time_stamp + 920 && @last_pokemon_attacked == false
       if sorted_pokemon.last.friendly?
         sorted_pokemon.last.use_move(sorted_pokemon.last.moves[0], sorted_pokemon.last, @player.current_pokemon)
       else
