@@ -35,8 +35,8 @@ class Pokemon
     end
   end
 
-  def use_move(move, player_pokemon, enemy_pokemon)
-    move.take_effect(player_pokemon, enemy_pokemon)
+  def use_move(move, friendly_pokemon, enemy_pokemon)
+    move.take_effect(friendly_pokemon, enemy_pokemon)
   end
 
   def enter_battle

@@ -1,4 +1,4 @@
-require 'gosu'
+require 'pry'
 require_relative '../lib/prof_oak/player.rb'
 require_relative '../lib/prof_oak/enemy_player.rb'
 require_relative '../lib/prof_oak/text.rb'
@@ -210,12 +210,13 @@ class ProfessorOak < Gosu::Window
       @second_time_stamp = @time_stamp
       @first_pokemon_attacked = true
     end
-    if Gosu.milliseconds.between?((@time_stamp + 900),(@time_stamp + 920))
+    if Gosu.milliseconds.between?((@time_stamp + 900),(@time_stamp + 920)) && @last_pokemon_attacked == false
       if sorted_pokemon.last.friendly?
         sorted_pokemon.last.use_move(sorted_pokemon.last.moves[0], sorted_pokemon.last, @player.current_pokemon)
       else
         sorted_pokemon.first.use_move(sorted_pokemon.first.moves[@cursor.menu_selection_y], sorted_pokemon.first, @enemy_player.current_pokemon)
-      end    
+      end
+      @last_pokemon_attacked = true
     end
     if Gosu.milliseconds > @second_time_stamp + 1800
       @cursor.reset_battle_menu
@@ -263,6 +264,7 @@ def button_down_attack_menu(id)
   elsif id == Gosu::KbReturn
     @scene = :move_animations
     @first_pokemon_attacked = false
+    @last_pokemon_attacked = false
   end
 end
 
